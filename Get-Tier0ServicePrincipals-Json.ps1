@@ -1,3 +1,5 @@
+# Recommended to run from Cloud Shell
+
 # Set your app registration details
 $tenantId = ""
 $appId = ""
@@ -33,7 +35,7 @@ $servicePrincipals = $servicePrincipalsResponse.value
 # Output the service principals
 $servicePrincipals
 
-# Define the role assignment GUIDs and their corresponding names
+# Define the role assignment GUIDs and their corresponding names for Tier 0 privileges
 $roleAssignments = @{
     "1bfefb4e-e0b5-418b-a88f-73c46d2cc8e9" = "Application.ReadWrite.All"
     "06b708a9-e830-4db3-a914-8e69da51d44f" = "AppRoleAssignment.ReadWrite.All"
@@ -50,7 +52,7 @@ $headers = @{
 }
 
 # Specify the output file path
-# $outputFilePath = "C:\path\to\your\output\file.json"
+$outputFilePath = "/your/path/here"
 
 # Create an array to hold the service principal objects
 $servicePrincipalObjects = @()
@@ -90,7 +92,7 @@ foreach ($roleAssignment in $roleAssignments.Keys) {
 }
 
 # Convert the array to JSON and write to the file
-$servicePrincipalObjects | ConvertTo-Json -Depth 5 | Out-File -FilePath "/home/dan/output.json"
+$servicePrincipalObjects | ConvertTo-Json -Depth 5 | Out-File -FilePath "$($outputFilePath)/output.json"
 
 # Inform the user that the script has completed and the output file is ready
 Write-Host "Script completed. Check the output JSON file."
