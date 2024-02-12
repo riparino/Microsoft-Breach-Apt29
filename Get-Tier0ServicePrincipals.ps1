@@ -1,6 +1,6 @@
 # Set your app registration details
-$tenantId = "838f6c73-507b-4674-b621-d8dd0009208d"
-$appId = "89a0d0d0-4f6a-4a94-a935-7c22106b6800"
+$tenantId = ""
+$appId = ""
 $appSecret = ""
 $scope = "https://graph.microsoft.com/.default"
 
