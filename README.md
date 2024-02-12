@@ -1,4 +1,5 @@
 ## Resources
+Use to hunt in your environments for Tier0 SPNs.
 
 - https://posts.specterops.io/microsoft-breach-what-happened-what-should-azure-admins-do-da2b7e674ebc
 - https://github.com/BloodHoundAD/BARK
