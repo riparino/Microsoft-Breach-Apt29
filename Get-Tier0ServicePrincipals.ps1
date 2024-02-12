@@ -1,3 +1,5 @@
+# Recommended to run from Cloud Shell
+
 # Set your app registration details
 $tenantId = ""
 $appId = ""
@@ -31,7 +33,7 @@ $servicePrincipalsResponse = Invoke-RestMethod -Uri $servicePrincipalsUrl -Heade
 $servicePrincipals = $servicePrincipalsResponse.value
 
 # Output the service principals
-$servicePrincipals
+# $servicePrincipals
 
 # Define the role assignment GUIDs and their corresponding names
 $roleAssignments = @{
@@ -50,12 +52,10 @@ $headers = @{
 }
 
 # Specify the output file path
-#$outputFilePath = "/home/dan/"
+$outputFilePath = "/home/dan"
 
-# Ensure the file is empty before starting
-#if (Test-Path $outputFilePath) {
-#    Clear-Content $outputFilePath
-#}
+# Create an array to hold the service principal objects
+$servicePrincipalObjects = @()
 
 foreach ($roleAssignment in $roleAssignments.Keys) {
     $escapedFilter = [System.Uri]::EscapeDataString("appRoleAssignments/any(x:x/id eq '$roleAssignment')")
@@ -64,29 +64,37 @@ foreach ($roleAssignment in $roleAssignments.Keys) {
     $servicePrincipals = $servicePrincipalsResponse.value
 
     foreach ($sp in $servicePrincipals) {
-        $output = "Service Principal ID: $($sp.id)`r`n"
-        $output += "Service Principal Name: $($sp.displayName)`r`n"
-        $output += "App Role Assignments:`r`n"
-
         $appRoleAssignmentsUrl = "https://graph.microsoft.com/v1.0/servicePrincipals/$($sp.id)/appRoleAssignedTo"
         $appRoleAssignmentsResponse = Invoke-RestMethod -Uri $appRoleAssignmentsUrl -Headers $headers -Method Get
         $appRoleAssignments = $appRoleAssignmentsResponse.value
 
+        $assignments = @()
         foreach ($appRoleAssignment in $appRoleAssignments) {
             if ($roleAssignments.ContainsKey($appRoleAssignment.appRoleId)) {
                 $roleName = $roleAssignments[$appRoleAssignment.appRoleId]
-                $output += "`tRole ID: $($appRoleAssignment.appRoleId)`r`n"
-                $output += "`tRole Name: $roleName`r`n"
-                $output += "`tResource ID: $($appRoleAssignment.resourceId)`r`n"
-                $output += "`tPrincipal ID: $($appRoleAssignment.principalId)`r`n"
+                $assignmentObject = @{
+                    RoleID = $appRoleAssignment.appRoleId
+                    RoleName = $roleName
+                    ResourceID = $appRoleAssignment.resourceId
+                    PrincipalID = $appRoleAssignment.principalId
+                }
+                $assignments += $assignmentObject
             }
         }
-        $output += "`r`n"
 
-        # Write the output to the file
-        Add-Content -Path "/home/dan/output.txt" -Value $output
+        if ($assignments.Count -gt 0) {
+            $spObject = @{
+                ServicePrincipalID = $sp.id
+                ServicePrincipalName = $sp.displayName
+                AppRoleAssignments = $assignments
+            }
+            $servicePrincipalObjects += $spObject
+        }
     }
 }
 
+# Convert the array to JSON and write to the file
+$servicePrincipalObjects | ConvertTo-Json -Depth 5 | Out-File -FilePath $outputFilePath
+
 # Inform the user that the script has completed and the output file is ready
-Write-Host "Script completed. Check the output file."
+Write-Host "Script completed. Check the output JSON file at: $outputFilePath"
