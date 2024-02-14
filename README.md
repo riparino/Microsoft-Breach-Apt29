@@ -8,7 +8,7 @@ Requies an App with Application.Read.All to be registered and for you to have th
 - https://www.microsoft.com/en-us/security/blog/2024/01/25/midnight-blizzard-guidance-for-responders-on-nation-state-attack/
 
 ## Sample Output
-![alt text](sample-output.png)
+# ![alt text](sample-output.png)
 
 ## Coming Soon
 - Additional script for EWS permissions and enumeration of EXO mail roles
